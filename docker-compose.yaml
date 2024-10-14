@@ -1,0 +1,40 @@
+version: '3'
+services:
+  database:
+    image: mysql:latest
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: myapp
+      MYSQL_PASSWORD: root
+      MYSQL_DATABASE: myapp
+    ports:
+      - 3385:3306
+    volumes:
+      - ./mysql-data:/var/lib/mysql
+    restart: unless-stopped
+  redis:
+    image: redis:latest
+    ports:
+      - 6385:6379
+  rabbitmq:
+    image: rabbitmq:3.10-management-alpine
+    ports:
+      - 5685:5672
+      - 15685:15672
+  app:
+    image: ghcr.io/springboot-jwt/myapp:latest
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://database:3306/myapp?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: myapp
+      SPRING_DATASOURCE_PASSWORD: root
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_JPA_GENERATE_DDL: true
+      SPRING_JPA_SHOW_SQL: true
+      SPRING_JPA_HIBERNATE_DIALECT: org.hibernate.dialect.MySQLDialect
+
