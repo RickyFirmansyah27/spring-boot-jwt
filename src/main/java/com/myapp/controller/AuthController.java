@@ -56,6 +56,6 @@ public class AuthController {
 
         AppUser appUser = modelMapper.map(userData, AppUser.class);
         appUserService.registAppUser(appUser);
-        return new BaseResponse<>("success", "Product registered successfully", appUser);
+        return new BaseResponse<>("success", "User registered successfully", appUser);
     }
 }
